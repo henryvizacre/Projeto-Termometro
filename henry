@@ -1,0 +1,68 @@
+//* Como usar o sensor DHT-11 com Arduino
+//   Sensor de temperatura e umidade e
+//   I2C LCD1602
+ //  SDA --> A4
+ //  SCL --> A5
+
+//Bibliotecas
+#include <DHT.h>;
+//I2C LCD:
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+
+LiquidCrystal_I2C lcd(0x27,16,2); // define o endereço do LCD como 0x27 para um display de 16 caracteres e 2 linhas
+  
+//Constantes
+#define DHTPIN 7     // ao qual pino estamos conectados
+#define DHTTYPE DHT11   // DHT 11
+DHT dht(DHTPIN, DHTTYPE); //// Inicializa o sensor DHT para Arduino normal de 16 MHz
+
+//Variáveis
+//int chk;
+int h;  // Armazena o valor da umidade
+int t; // Armazena o valor da temperatura
+
+void setup()
+{
+    Serial.begin(9600);
+    Serial.println("Teste do Sensor de Temperatura e Umidade");
+    dht.begin();
+    lcd.init(); // inicializa o lcd
+    lcd.backlight(); // liga o backlight
+}
+
+void loop()
+{
+    //Lê os dados e os armazena nas variáveis h (umidade) e t (temperatura)
+    // Ler a temperatura ou umidade leva cerca de 250 milissegundos!
+    h = dht.readHumidity();
+    t = dht.readTemperature();
+    
+    //Imprime os valores de temperatura e umidade no monitor serial
+    Serial.print("Umidade: ");
+    Serial.print(h);
+    Serial.print(" %, Temperatura: ");
+    Serial.print(t);
+    Serial.println(" ° Celsius");
+        
+// define o cursor para (0,0):
+// imprime de 0 a 9:
+
+    lcd.setCursor(0, 0);
+    lcd.println(" Temperatura Atual ");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("T:");
+    lcd.print(t);
+    lcd.print("C");
+
+    lcd.setCursor(6, 1);
+    lcd.println("2020 ");
+     
+    lcd.setCursor(11, 1);
+    lcd.print("U:");
+    lcd.print(h);
+    lcd.print("%");
+    
+  delay(1000); //Aguarda 1 segundo.
+}
